@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="challenge" type="give_dirs" name="give_dirs" />
+	<test test-name="give_dirs_test" pkg="challenge" type="give_dirs_test" />
+</launch>

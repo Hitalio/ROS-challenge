@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+  // Connecting to ROS
+  // -----------------
+
+	var ros = new ROSLIB.Ros({
+		url : 'ws://localhost:9091'
+	});
+//This three next blocks of ros.on adds objects that listens the connection, error and close events. This way we can know when any of these happen
+	ros.on('connection', function() {
+		console.log('Connected to websocket server.');
+	});
+
+	ros.on('error', function(error) {
+		console.log('Error connecting to websocket server: ', error);
+	});
+
+	ros.on('close', function() {
+		console.log('Connection to websocket server closed.');
+	});
+
+
+  // Subscribing to a Topic
+  // ----------------------
+
+	var vel_listener = new ROSLIB.Topic({
+		ros : ros,
+		name : '/turtle1/cmd_vel',
+		messageType : 'geometry_msgs/Twist'
+	});
+
+	var pos_listener = new ROSLIB.Topic({
+		ros : ros,
+		name : '/turtle1/pose',
+		messageType : 'turtlesim/Pose'
+	});
+
+	vel_listener.subscribe(function(message) {
+
+		// Write to html interface
+		document.getElementById("xVel_lin_box").innerHTML = (Math.round(message.linear.x * 100) / 100).toFixed(3);
+		document.getElementById("yVel_lin_box").innerHTML = (Math.round(message.linear.y * 100) / 100).toFixed(3);
+		document.getElementById("zVel_lin_box").innerHTML = (Math.round(message.linear.z * 100) / 100).toFixed(3);
+		document.getElementById("xVel_ang_box").innerHTML = (Math.round(message.angular.x * 100) / 100).toFixed(3);
+		document.getElementById("yVel_ang_box").innerHTML = (Math.round(message.angular.y * 100) / 100).toFixed(3);
+		document.getElementById("zVel_ang_box").innerHTML = (Math.round(message.angular.z * 100) / 100).toFixed(3);
+
+		//Write same message on console log
+		console.log('Received velocity on ' + vel_listener.name + ': ' + 'Linear: ' + message.linear.x + ';' + message.linear.y + ';' + message.linear.z + ' / Angular: ' + message.angular.x + ';' + message.angular.y + ';' + message.angular.z);
+	});
+
+	pos_listener.subscribe( async function(message) {
+
+		// Write to html interface
+		document.getElementById("xPos_box").innerHTML = (Math.round(message.x * 100) / 100).toFixed(3);
+		document.getElementById("yPos_box").innerHTML = (Math.round(message.y * 100) / 100).toFixed(3);
+
+		//Write same message on console log
+		console.log('Received position on ' + pos_listener.name + ': ' + message.x + ';' + message.y);
+	});
+
+</script>
+
+<style>
+
+	h1 {	/* Title format*/
+		color: Orange;
+		text-align: center;
+	}
+
+	#Pos_table, th, td {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+
+	#Vel_table, th, td {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+
+
+
+</style>
+
+</head>
+
+<body>
+	<h1> ROSLIBJS challenge extra </h1>
+
+	<h2> Turtle Position </h2>
+
+	<table style="width:100%"; id= "Pos_table";>
+	  <tr>
+		<th></th>
+		<th>x Position</th>
+		<th>y Position</th>
+	  </tr>
+	  <tr>
+		<td>Value</td>
+		<th id= "xPos_box";></td>
+		<th id= "yPos_box";></td>
+	  </tr>
+	</table>
+
+	<h2> Turtle Velocity </h2>
+
+	<table style="width:100%"; id= "Vel_table";>
+	  <tr>
+		<th></th>
+		<th> x Velocity </th>
+		<th> y Velocity </th>
+		<th> z Velocity </th>
+	  </tr>
+	  <tr>
+		<td>Linear</td>
+		<th id= "xVel_lin_box";></td>
+		<th id= "yVel_lin_box";></td>
+		<th id= "zVel_lin_box";></td>
+	  </tr>
+	  <tr>
+		<td>Angular</td>
+		<th id= "xVel_ang_box";></td>
+		<th id= "yVel_ang_box";></td>
+		<th id= "zVel_ang_box";></td>
+	  </tr>
+	</table>
+
+</body>
+</html>
+
+
