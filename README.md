@@ -1,6 +1,4 @@
-# tech_jcarosella
-
-Candidate technical challenge
+# ROS challenge
 
 Consideration before compiling and running the application:
 
